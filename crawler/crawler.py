@@ -2,7 +2,6 @@ import requests
 import os
 import time
 from bs4 import BeautifulSoup
-
 import dbModule
 
 target_url = 'http://malc0de.com/rss/'
@@ -62,8 +61,6 @@ def parse_content(soup):
 			return false
 
 	return malware_list
-
-
 
 
 def parse_description(desc):
