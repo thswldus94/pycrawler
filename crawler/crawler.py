@@ -29,16 +29,13 @@ def request_content(url):
 			soup = BeautifulSoup(index_f.read(), "html.parser")
 
 			malware_rows = parse_content(soup)
-			print(len(malware_rows))
 
-			for i in len(malware_rows):
-				print(malware_rows[i])
-				db_class = dbModule.Mysql()
-				#960: {'URL': 'pool.ug/tesptc/ck/updatewin2.exe', 'Country': 'RU', 'ASN': '48347', 'MD5': '996ba35165bb62473d2a6743a5200d45', 'IPAddress': '194.87.239.100', 'title': 'pool.ug'},
-				sql = """INSERT INTO MALWARE_INFO VALUES(URL, Country, MD5, IPAddress, title) values (%s, %s, %s, %s, %s)"""
-				db_class.execute(sql, (row.URL, row.Country, row.MD5, row.IPAddress, row.title))
-				db_class.commit()
-				break
+			db_class = dbModule.Mysql()
+			sql = """INSERT INTO MALWARE_INFO (title, URL, IPAddress, Country, ASN, MD5) VALUES (%s, %s, %s, %s, %s, %s)
+						ON DUPLICATE KEY UPDATE title = VALUES(title), URL = VALUES(URL), IPAddress = VALUES(IPAddress), Country = VALUES(Country), ASN = VALUES(ASN)"""
+
+			db_class.cursor.executemany(sql, malware_rows)
+			db_class.commit()
 		else:
 			return false
 
@@ -46,7 +43,7 @@ def request_content(url):
 def parse_content(soup):
 	all_item = soup.find_all("item")
 
-	malware_list = {}
+	malware_list = []
 	for n in range(len(all_item)):
 		title = all_item[n].find("title")
 		desc = all_item[n].find("description").string
@@ -54,13 +51,13 @@ def parse_content(soup):
 		if len(desc) > 0:
 			desc_parse = desc.replace(" ", "").split(",")
 
-			malware_list[n] = {
-				'title': title.string
-			}
+			tmp = [title.string]
 
 			detail_list = list(map(parse_description, desc_parse))
 			for detail in detail_list:
-				malware_list[n][detail[0]] = detail[1]
+				tmp.append(detail[1])
+
+			malware_list.append(tmp)
 		else:
 			return false
 

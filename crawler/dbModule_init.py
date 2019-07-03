@@ -6,8 +6,8 @@ class Mysql:
         self.db = pymysql.connect(
                     host='localhost',
                     user='root',
-                    password='qoWlfkdlej94',
-                    db='sonjy',
+                    password='password',
+                    db='db',
                     charset='utf8')
         self.cursor = self.db.cursor()
 
