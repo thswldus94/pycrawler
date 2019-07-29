@@ -30,8 +30,8 @@ def request_content(url):
 			malware_rows = parse_content(soup)
 
 			db_class = dbModule.Mysql()
-			sql = """INSERT INTO MALWARE_INFO (title, URL, IPAddress, Country, ASN, MD5) VALUES (%s, %s, %s, %s, %s, %s)
-						ON DUPLICATE KEY UPDATE title = VALUES(title), URL = VALUES(URL), IPAddress = VALUES(IPAddress), Country = VALUES(Country), ASN = VALUES(ASN)"""
+			sql = """INSERT INTO MALWARE_INFO (title, URL, IPAddress, Country, ASN, MD5, rdate, udate) VALUES (%s, %s, %s, %s, %s, %s, now(), now())
+						ON DUPLICATE KEY UPDATE title = VALUES(title), URL = VALUES(URL), IPAddress = VALUES(IPAddress), Country = VALUES(Country), ASN = VALUES(ASN), udate = now()"""
 
 			db_class.cursor.executemany(sql, malware_rows)
 			db_class.commit()
