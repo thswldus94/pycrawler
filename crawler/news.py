@@ -32,6 +32,8 @@ def request_content(url):
 
 			db_class.cursor.executemany(sql, news_rows)
 			db_class.commit()
+
+			return len(news_rows)
 		else:
 			return false
 
@@ -94,10 +96,25 @@ def get_page():
 			print(final_page)
 
 			# crawling pages
+			total_count = 0
 			for r in range(0, final_page):
 				p_url = 'https://media.daum.net/cp/8?cateId=1001&regDate={date}&page={page}'.format(date=current_time, page=r+1)
 				print(p_url)
-				request_content(p_url)
+				cur_count = request_content(p_url)
+				if cur_count == False: 
+					cur_count = 0
+				total_count = total_count + cur_count
+
+			insertStatNews(total_count)
+
+
+
+def insertStatNews(count):
+	db_class = dbModule.Mysql()
+	sql = """INSERT INTO stat_news (rdate, count) VALUES (now(), %s)"""
+
+	db_class.cursor.execute(sql, (count))
+	db_class.commit()
 
 
 
