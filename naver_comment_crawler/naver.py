@@ -11,7 +11,6 @@ base_comment_api_url = 'http://apis.naver.com/commentBox/cbox/web_naver_list_jso
 # page 수를 1부터 늘려가면서 체크
 # pageSize 와 indexSize는 기호대로 조정
 # sort=Favorite 붙이면 인기순으로 볼수있음
-# 뚱치기 화이팅 >.<
 
 def parse_url_get_content(url_str, base_comment_api_url):
     url_dict = parse.urlparse(url_str)
